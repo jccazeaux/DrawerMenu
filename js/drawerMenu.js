@@ -25,7 +25,8 @@ function DrawerMenu(menu, options) {
 	}
     var that = this;
    	/* touch/mouse events*/
-    var hasTouch = 'ontouchstart' in window && !isTouchPad,
+    var isTouchPad = (/hp-tablet/gi).test(navigator.appVersion),
+    	hasTouch = 'ontouchstart' in window && !isTouchPad,
 	START_EVENT = hasTouch ? 'touchstart' : 'mousedown',
 	MOVE_EVENT = hasTouch ? 'touchmove' : 'mousemove',
 	END_EVENT = hasTouch ? 'touchend' : 'mouseup',
@@ -113,7 +114,7 @@ function DrawerMenu(menu, options) {
 		if (position > 0) {
 			position = 0;
 		} else if (position < getDimMenu().width * -1 ) {
-			postion = getDimMenu().left * -1;
+			position = getDimMenu().left * -1;
 		}
 		menu.style[getTransformProp()] = "translate3d(" + position  + "px,0,0)";
 	}
