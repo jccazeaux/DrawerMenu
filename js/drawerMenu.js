@@ -80,7 +80,7 @@ function DrawerMenu(menu, options) {
 	};
 
 	/**
-	 * Destruction du menu. Détruit le shadow, réinitialise le menu et débranche les listeners
+	 * Destroys the drawer effect. Resets the events
 	 * @function {public void} destroy
 	 */
 	this.destroy = function() {
