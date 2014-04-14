@@ -18,9 +18,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 function DrawerMenu(menu, options) {
 	var settings = {
 		"leftPadding": 40
-	}
+	};
 	// Merge the settings with the options
-	for (optionsItem in options) {
+	for (var optionsItem in options) {
 		settings[optionsItem] = options[optionsItem];
 	}
     var that = this;
@@ -47,7 +47,7 @@ function DrawerMenu(menu, options) {
    		divShadow.style.left = 0;
    		divShadow.style.height = 0;
    		divShadow.style.width = 0;
-   		divShadow.style["z-index"] = 9999;
+   		divShadow.style["z-index"] = 999;
    		divShadow.style.background = "#000";
    		divShadow.style.opacity = 0;
    		divShadow.style[getTransitionProp()] = "opacity .3s ease-out";
@@ -72,11 +72,26 @@ function DrawerMenu(menu, options) {
 			case CANCEL_EVENT: release(event); break;
 			case END_EVENT: release(event); break;
 			case 'click': 
-				if (event.target == shadow) {
-					return that.hide(event);break;
+				if (event.target === shadow) {
+					return that.hide(event);
 				}
+				break;
 		}
-	}
+	};
+
+	/**
+	 * Destruction du menu. Détruit le shadow, réinitialise le menu et débranche les listeners
+	 * @function {public void} destroy
+	 */
+	this.destroy = function() {
+		shadow.parentNode.removeChild(shadow);
+	    /* Events initialisation */
+		window.removeEventListener(START_EVENT, this, true);
+		shadow.removeEventListener('click', this, true);
+		unAnimateMenu();
+		this.show();
+		reset();
+	};
 	
 	/**
 	 * Callback on a drag starting
@@ -108,6 +123,7 @@ function DrawerMenu(menu, options) {
 	 * @param {Event} e
 	 */
 	function drag(e) {
+		e.preventDefault();
 		that.clientX = getMousePosition(e).X;
 		// On calcule la position relative
 		var position = that.clientX + that.initialleft - that.initialMouseX ;
@@ -122,11 +138,8 @@ function DrawerMenu(menu, options) {
 	/**
 	 * Callback when the menu is released
 	 * @function {private void} release
-	 * @param {Event} e
 	 */
-	function release(e) {
-		// On calcule la position relative
-		var position = that.clientX + that.initialleft - that.initialMouseX ;
+	function release() {
 		animateMenu();
 		if (getDimMenu().left > Math.round(getDimMenu().width / 2) * -1) {
 			that.show();
@@ -150,47 +163,45 @@ function DrawerMenu(menu, options) {
 	 * @function {private void} animateMenu
 	 */
 	function animateMenu() {
-		menu.style["transition"] = "transform .3s ease-out";
-		menu.style["WebkitTransition"] = "-webkit-transform .3s ease-out";
-		menu.style["MozTransition"] = "-moz-transform .3s ease-out";
-		menu.style["OTransition"] = "-o-transform .3s ease-out";
-		menu.style["msTransition"] = "-ms-transform .3s ease-out";
+		menu.style.transition = "transform .3s ease-out";
+		menu.style.WebkitTransition = "-webkit-transform .3s ease-out";
+		menu.style.MozTransition = "-moz-transform .3s ease-out";
+		menu.style.OTransition = "-o-transform .3s ease-out";
+		menu.style.msTransition = "-ms-transform .3s ease-out";
 	}
 	/**
 	 * Deactive the animation on the menu
 	 * @function {private void} unAnimateMenu
 	 */
 	function unAnimateMenu() {
-		menu.style["transition"] = "none";
-		menu.style["WebkitTransition"] = "none";
-		menu.style["MozTransition"] = "none";
-		menu.style["OTransition"] = "none";
-		menu.style["msTransition"] = "none";
+		menu.style.transition = "none";
+		menu.style.WebkitTransition = "none";
+		menu.style.MozTransition = "none";
+		menu.style.OTransition = "none";
+		menu.style.msTransition = "none";
 	}
 	
 	/**
 	 * Hide the menu
 	 * @function {public void} hide
-	 * @param {Event} e
 	 */
-	this.hide = function(e) {
+	this.hide = function() {
 		menu.style[getTransformProp()] = "translate3d(-" + getDimMenu().width + "px,0,0)";
 		animateMenu();
 		hideShadow();
 		reset();
-	}
+	};
 	
 	/**
 	 * Show the menu
 	 * @function {public void} show
-	 * @param {Event} e
 	 */
-	this.show = function(e) {
+	this.show = function() {
 		menu.style[getTransformProp()] = "translate3d(0,0,0)";
 		animateMenu();
 		showShadow();
 		reset();
-	}
+	};
 	
 	/**
 	 * Show the shadow div
@@ -290,3 +301,4 @@ function DrawerMenu(menu, options) {
 
 }
 
+module.exports = DrawerMenu;
